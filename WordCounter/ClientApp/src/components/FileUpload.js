@@ -31,15 +31,15 @@ function FileUpload(){
         <form onSubmit={(e) => handleSubmit(e)}>
             <h1>File Upload</h1>
             <input type="file" onChange={e => setFile(e.target.files[0])} />
-            <button type="submit">Upload</button>
+            <button className="btn btn-primary" type="submit">Upload</button>
             <div>{result}</div>
             <div>{error}</div>
             { loading ? 
                 <Loader
-                type="Puff"
+                type="Circles"
                 color="#00BFFF"
-                height={100}
-                width={100}
+                height={80}
+                width={80}
             />:null } 
         </form>
     );
