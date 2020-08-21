@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
+import Loader from 'react-loader-spinner'
 
 function FileUpload(){
     const [loading, setLoading] = useState(false);
@@ -30,6 +31,13 @@ function FileUpload(){
             <input type="file" onChange={e => setFile(e.target.files[0])} />
             <button type="submit">Upload</button>
             <div>{result}</div>
+            { loading ? 
+                <Loader
+                type="Puff"
+                color="#00BFFF"
+                height={100}
+                width={100}
+            />:null } 
         </form>
     );
 }
