@@ -27,7 +27,6 @@ namespace WordCounter.Controllers
             var contentType = body.ContentType;
             
             //SaveFileToDatabase(id, fileBytes, filename, contentType);
-
             return Ok("BlaBla");
         }
     }
