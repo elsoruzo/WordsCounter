@@ -10,7 +10,7 @@ function FileUpload(){
     const [file, setFile] = useState();
     
     // handleSubmit can be used in a separate service later on
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const { url } = constants;
         const formData = new FormData();
@@ -20,13 +20,11 @@ function FileUpload(){
                 'content-type': 'multipart/form-data',
             },
         };
-        setLoading(true);
-        axios.post(url, formData, config).then(r => {
-            setResult(r.data);
-            setLoading(false);
-        }).catch((error) => {
-            console.error(error);
-        });
+        setLoading(true);         
+          let response = await axios.post(url, formData, config);
+           setResult(response.data);
+           setLoading(false);
+
     };
 
     return (
