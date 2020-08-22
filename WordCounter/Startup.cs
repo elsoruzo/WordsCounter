@@ -35,11 +35,11 @@ namespace WordCounter
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped(typeof(IMessageService), typeof(MessageService));
             
-            services.AddScoped<ITxtService, TxtService>();
-            services.AddScoped(typeof(ITxtService), typeof(TxtService));
+            services.AddScoped<ITxtCsvService, TxtCsvCsvService>();
+            services.AddScoped(typeof(ITxtCsvService), typeof(TxtCsvCsvService));
             
-            services.AddScoped<ICsvService, CsvService>();
-            services.AddScoped(typeof(ICsvService), typeof(CsvService));
+            services.AddScoped<IPdfService, PdfService>();
+            services.AddScoped(typeof(IPdfService), typeof(PdfService));
 
             services.AddControllersWithViews();
 

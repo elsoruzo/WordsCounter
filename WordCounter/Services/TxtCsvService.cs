@@ -5,17 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using WordCounter.Models;
 
 namespace WordCounter.Services
 {
-    public interface ITxtService
+    public interface ITxtCsvService
     {
         public Task<string> GetWordsCount(IFormFile body);
     }
 
-    public class TxtService : ITxtService
+    public class TxtCsvCsvService : ITxtCsvService
     {
-        private static readonly char[] separators = {' '};
+        private static readonly char[] separators = {' ', '.', ',','?','!'};
         private static List<string> lines;
         private static ConcurrentDictionary<string, int> freqeuncyDictionary;
         public async Task<string> GetWordsCount(IFormFile body)
@@ -33,6 +34,10 @@ namespace WordCounter.Services
             }
 
             ConcurrentDictionary<string, int> result = GetWordsCountFromLines(lines);
+            if (result.Count == 0)
+            {
+                return Constants.ZeroWordsCount;
+            }
 
             return result.First().Value.ToString();
         }

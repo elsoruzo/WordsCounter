@@ -12,14 +12,14 @@ namespace WordCounter.Services
 
     public class FileSelectorService : IFileSelectorService
     {
-        ICsvService _csvService;
-        ITxtService _txtService;
+        IPdfService _pdfService;
+        ITxtCsvService _txtCsvService;
 
 
-        public FileSelectorService(ICsvService csvService, ITxtService txtService)
+        public FileSelectorService(IPdfService pdfService, ITxtCsvService txtCsvService)
         {
-            _csvService = csvService;
-            _txtService = txtService;
+            _pdfService = pdfService;
+            _txtCsvService = txtCsvService;
         }
         public async Task<string> GetResult(IFormFile body)
         {
@@ -31,18 +31,12 @@ namespace WordCounter.Services
         {
             int delim = body.FileName.LastIndexOf(".",StringComparison.InvariantCultureIgnoreCase);
             string ext = body.FileName.Substring(delim >= 0 ? delim : 0).ToLower();
-            if (ext == Constants.FileExtTxt)
+            if (ext == Constants.FileExtTxt||ext == Constants.FileExtCsv)
             {
-                return await _txtService.GetWordsCount(body);
+                return await _txtCsvService.GetWordsCount(body);
             }
             
-            if (ext == Constants.FileExtCsv)
-            {
-                return await _csvService.GetWordsCount(body);
-            }
-
             throw new NotImplementedException("FileSelectorService, the file extension is unsupported");
-
         }
     }
 }
