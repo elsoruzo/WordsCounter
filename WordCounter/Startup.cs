@@ -23,8 +23,24 @@ namespace WordCounter
         public void ConfigureServices(IServiceCollection services)
         {
             
-            services.AddScoped<ICallVerificationService, CallVerificationService>();
-            services.AddScoped(typeof(ICallVerificationService), typeof(CallVerificationService));
+            services.AddScoped<IFileProcessingService, FileProcessingService>();
+            services.AddScoped(typeof(IFileProcessingService), typeof(FileProcessingService));
+            
+            services.AddScoped<IFileSelectorService, FileSelectorService>();
+            services.AddScoped(typeof(IFileSelectorService), typeof(FileSelectorService));
+            
+            services.AddScoped<IFileValidationService, FileValidationService>();
+            services.AddScoped(typeof(IFileValidationService), typeof(FileValidationService));
+            
+            services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped(typeof(IMessageService), typeof(MessageService));
+            
+            services.AddScoped<ITxtService, TxtService>();
+            services.AddScoped(typeof(ITxtService), typeof(TxtService));
+            
+            services.AddScoped<ICsvService, CsvService>();
+            services.AddScoped(typeof(ICsvService), typeof(CsvService));
+
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
