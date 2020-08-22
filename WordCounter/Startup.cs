@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WordCounter.Services;
 
 namespace WordCounter
 {
@@ -21,6 +22,9 @@ namespace WordCounter
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            services.AddScoped<ICallVerificationService, CallVerificationService>();
+            services.AddScoped(typeof(ICallVerificationService), typeof(CallVerificationService));
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory

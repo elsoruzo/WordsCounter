@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WordCounter.Services;
 
 namespace WordCounter.Controllers
 {
@@ -17,11 +18,22 @@ namespace WordCounter.Controllers
         private static readonly char[] separators = {' '};
         private static List<string> lines;
         private static ConcurrentDictionary<string, int> freqeuncyDictionary;
+        ICallVerificationService _callVerificationService;
 
+        public ApiController(ICallVerificationService callVerificationService)
+        {
+            _callVerificationService = callVerificationService;
+        }
+        
         [HttpPost]
         [Route("Upload")]
         public async Task<IActionResult> Post([FromRoute] Guid id, [FromForm] IFormFile body)
-        {   
+        {
+            var verify = await _callVerificationService.Verify(body);
+            if (!verify)
+            {
+                return Ok("The file is empty");
+            } 
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
             lines = new List<string>();
