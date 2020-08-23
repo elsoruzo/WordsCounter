@@ -44,9 +44,9 @@ namespace WordCounter.Services
             }
 
             finally
-
+            
             {
-
+                
                 mutex.Release();
 
             }
