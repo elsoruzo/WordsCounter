@@ -18,7 +18,7 @@ namespace WordCounter.Services
     {
         private static readonly char[] separators = {' ', '.', ',','?','!'};
         private static List<string> lines;
-        private static ConcurrentDictionary<string, int> freqeuncyDictionary;
+        private static ConcurrentDictionary<string, int> countDictionary;
         public async Task<string> GetWordsCount(IFormFile body)
         {
             lines = new List<string>();
@@ -34,6 +34,7 @@ namespace WordCounter.Services
             }
 
             ConcurrentDictionary<string, int> result = GetWordsCountFromLines(lines);
+            
             if (result.Count == 0)
             {
                 return Constants.ZeroWordsCount;
@@ -44,18 +45,18 @@ namespace WordCounter.Services
         
         public static ConcurrentDictionary<string, int> GetWordsCountFromLines(List<string> lines)
         {
-            freqeuncyDictionary = new ConcurrentDictionary<string, int>();
+            countDictionary = new ConcurrentDictionary<string, int>();
             Parallel.ForEach(lines, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },line =>
             {
                 var words = line.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var word in words)
                 {
-                    freqeuncyDictionary.AddOrUpdate("amount", 1, (key, oldValue) => oldValue + 1);
+                    countDictionary.AddOrUpdate("amount", 1, (key, oldValue) => oldValue + 1);
                 }
             });
 
-            return freqeuncyDictionary;
+            return countDictionary;
         }
     }
 }
