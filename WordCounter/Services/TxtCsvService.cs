@@ -35,15 +35,10 @@ namespace WordCounter.Services
 
             ConcurrentDictionary<string, int> result = GetWordsCountFromLines(lines);
             
-            if (result.Count == 0)
-            {
-                return Constants.ZeroWordsCount;
-            }
-
-            return result.First().Value.ToString();
+            return result.Count == 0 ? Constants.ZeroWordsCount : result.First().Value.ToString();
         }
         
-        public static ConcurrentDictionary<string, int> GetWordsCountFromLines(List<string> lines)
+        private static ConcurrentDictionary<string, int> GetWordsCountFromLines(List<string> lines)
         {
             countDictionary = new ConcurrentDictionary<string, int>();
             Parallel.ForEach(lines, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },line =>
