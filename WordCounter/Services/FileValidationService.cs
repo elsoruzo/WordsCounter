@@ -11,19 +11,24 @@ namespace WordCounter.Services
     {
         public Task<bool> IsFileSupported(IFormFile body);
         public Task<bool> IsFileNullOrEmpty(IFormFile body);
+        public string GetFileExtType(IFormFile body);
     }
 
     public class FileValidationService : IFileValidationService
     {
         SemaphoreSlim mutex = new SemaphoreSlim(1);
 
-
+        public string GetFileExtType(IFormFile body)
+        {
+            var delim = body.FileName.LastIndexOf(".",StringComparison.InvariantCultureIgnoreCase);
+            var ext = body.FileName.Substring(delim >= 0 ? delim : 0).ToLower();
+            return ext;
+        }
         public async Task<bool> IsFileSupported(IFormFile body)
         {
             return await Verify(body, (body) =>
             {   
-                int delim = body.FileName.LastIndexOf(".",StringComparison.InvariantCultureIgnoreCase);
-                string ext = body.FileName.Substring(delim >= 0 ? delim : 0).ToLower();
+                var ext = GetFileExtType(body);
                 return ext == Constants.FileExtTxt || ext == Constants.FileExtCsv;
             });
         }

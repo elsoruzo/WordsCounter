@@ -14,12 +14,12 @@ namespace WordCounter.Services
     {
         IPdfService _pdfService;
         ITxtCsvService _txtCsvService;
-
-
-        public FileSelectorService(IPdfService pdfService, ITxtCsvService txtCsvService)
+        IFileValidationService _fileValidationService;
+        public FileSelectorService(IPdfService pdfService, ITxtCsvService txtCsvService, IFileValidationService fileValidationService)
         {
             _pdfService = pdfService;
             _txtCsvService = txtCsvService;
+            _fileValidationService = fileValidationService;
         }
         public async Task<string> GetResult(IFormFile body)
         {
@@ -29,8 +29,7 @@ namespace WordCounter.Services
         
         public async Task<string> SelectService(IFormFile body)
         {
-            int delim = body.FileName.LastIndexOf(".",StringComparison.InvariantCultureIgnoreCase);
-            string ext = body.FileName.Substring(delim >= 0 ? delim : 0).ToLower();
+            var ext = _fileValidationService.GetFileExtType(body);
             if (ext == Constants.FileExtTxt||ext == Constants.FileExtCsv)
             {
                 return await _txtCsvService.GetWordsCount(body);
