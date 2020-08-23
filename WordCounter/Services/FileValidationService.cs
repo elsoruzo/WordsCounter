@@ -16,7 +16,7 @@ namespace WordCounter.Services
 
     public class FileValidationService : IFileValidationService
     {
-        SemaphoreSlim mutex = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1);
 
         public string GetFileExtType(IFormFile body)
         {
@@ -26,23 +26,23 @@ namespace WordCounter.Services
         }
         public async Task<bool> IsFileSupported(IFormFile body)
         {
-            return await Verify(body, (body) =>
+            return await Verify(body, (bodyData) =>
             {   
-                var ext = GetFileExtType(body);
+                var ext = GetFileExtType(bodyData);
                 return ext == Constants.FileExtTxt || ext == Constants.FileExtCsv;
             });
         }
 
         public async Task<bool> IsFileNullOrEmpty(IFormFile body)
         {
-            return await Verify(body, (body) => body != null && body.Length != 0);
+            return await Verify(body, (bodyData) => bodyData != null && bodyData.Length != 0);
         }
         
         private async Task<bool> Verify(IFormFile body, Func<IFormFile, bool> verify)
         {
             bool value;
             
-            await mutex.WaitAsync().ConfigureAwait(false);
+            await _mutex.WaitAsync().ConfigureAwait(false);
 
             try
 
@@ -53,7 +53,7 @@ namespace WordCounter.Services
             finally
 
             {
-                mutex.Release();
+                _mutex.Release();
             }
             
             return  value;

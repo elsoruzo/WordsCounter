@@ -16,12 +16,12 @@ namespace WordCounter.Services
 
     public class TxtCsvCsvService : ITxtCsvService
     {
-        private static readonly char[] separators = {' ', '.', ',','?','!'};
-        private static List<string> lines;
-        private static ConcurrentDictionary<string, int> countDictionary;
+        private static readonly char[] Separators = {' ', '.', ',','?','!'};
+        private static List<string> _lines;
+        private static ConcurrentDictionary<string, int> _countDictionary;
         public async Task<string> GetWordsCount(IFormFile body)
         {
-            lines = new List<string>();
+            _lines = new List<string>();
 
 
             using (var streamReader = new StreamReader(body.OpenReadStream()))
@@ -29,29 +29,29 @@ namespace WordCounter.Services
                 string line;
                 while ((line = await streamReader.ReadLineAsync()) != null)
                 {
-                    lines.Add(line);
+                    _lines.Add(line);
                 }
             }
 
-            ConcurrentDictionary<string, int> result = GetWordsCountFromLines(lines);
+            ConcurrentDictionary<string, int> result = GetWordsCountFromLines(_lines);
             
             return result.Count == 0 ? Constants.ZeroWordsCount : result.First().Value.ToString();
         }
         
-        private static ConcurrentDictionary<string, int> GetWordsCountFromLines(List<string> lines)
+        private static ConcurrentDictionary<string, int> GetWordsCountFromLines(IEnumerable<string> lines)
         {
-            countDictionary = new ConcurrentDictionary<string, int>();
+            _countDictionary = new ConcurrentDictionary<string, int>();
             Parallel.ForEach(lines, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },line =>
             {
-                var words = line.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                var words = line.Split(Separators, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var word in words)
                 {
-                    countDictionary.AddOrUpdate("amount", 1, (key, oldValue) => oldValue + 1);
+                    _countDictionary.AddOrUpdate("amount", 1, (key, oldValue) => oldValue + 1);
                 }
             });
 
-            return countDictionary;
+            return _countDictionary;
         }
     }
 }

@@ -12,9 +12,9 @@ namespace WordCounter.Services
 
     public class FileSelectorService : IFileSelectorService
     {
-        IPdfService _pdfService;
-        ITxtCsvService _txtCsvService;
-        IFileValidationService _fileValidationService;
+        private readonly IPdfService _pdfService;
+        private readonly ITxtCsvService _txtCsvService;
+        private readonly IFileValidationService _fileValidationService;
         public FileSelectorService(IPdfService pdfService, ITxtCsvService txtCsvService, IFileValidationService fileValidationService)
         {
             _pdfService = pdfService;
@@ -27,7 +27,7 @@ namespace WordCounter.Services
 
         }
         
-        public async Task<string> SelectService(IFormFile body)
+        private async Task<string> SelectService(IFormFile body)
         {
             var ext = _fileValidationService.GetFileExtType(body);
             if (ext == Constants.FileExtTxt||ext == Constants.FileExtCsv)

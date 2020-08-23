@@ -24,7 +24,7 @@ namespace WordCounter.Controllers
             // the stop watch is for debug purposes only this is why is not in a separate component 
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
-            var result = await _fileProcessingService.ProccessFile(body);
+            var result = await _fileProcessingService.ProcessFile(body);
 
             // the stop watch is for debug purposes only this is why is not in a separate component 
             stopwatch.Stop();

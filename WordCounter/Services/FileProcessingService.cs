@@ -6,20 +6,20 @@ namespace WordCounter.Services
 {
     public interface IFileProcessingService
     {
-        public Task<string> ProccessFile(IFormFile body);
+        public Task<string> ProcessFile(IFormFile body);
 
     }
 
     public class FileProcessingService : IFileProcessingService
     {
-        public async Task<string> ProccessFile(IFormFile body)
+        public async Task<string> ProcessFile(IFormFile body)
         {
             return await GetResult(body);
         }
         
-        IFileValidationService _fileValidationService;
-        IMessageService _messageService;
-        IFileSelectorService _fileSelectorService;
+        private readonly IFileValidationService _fileValidationService;
+        private readonly IMessageService _messageService;
+        private readonly IFileSelectorService _fileSelectorService;
 
         public FileProcessingService(IFileValidationService fileValidationService, IMessageService messageService, IFileSelectorService fileSelectorService)
         {

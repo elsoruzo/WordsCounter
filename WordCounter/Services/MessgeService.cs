@@ -11,12 +11,12 @@ namespace WordCounter.Services
     }
     public class MessageService : IMessageService
     {
-        SemaphoreSlim mutex = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1);
         public async Task<string> GetMessage(FileState fileState, string wordCount = null)
         {
             string result = null;
 
-            await mutex.WaitAsync().ConfigureAwait(false);
+            await _mutex.WaitAsync().ConfigureAwait(false);
 
             try
 
@@ -47,7 +47,7 @@ namespace WordCounter.Services
             
             {
                 
-                mutex.Release();
+                _mutex.Release();
 
             }
 
