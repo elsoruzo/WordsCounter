@@ -31,7 +31,7 @@ function FileUpload(){
         <form onSubmit={(e) => handleSubmit(e)}>
             <h1>File Upload</h1>
             <input type="file" onChange={e => setFile(e.target.files[0])} />
-            <button className="btn btn-primary" type="submit">Upload</button>
+            <button disabled={!file || loading} className="btn btn-primary" type="submit">Upload</button>
             {!loading ? <div>{result}</div> : null}
             <div>{error}</div>
             { loading ? 

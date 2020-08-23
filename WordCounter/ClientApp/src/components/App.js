@@ -1,7 +1,8 @@
 import React,  { Component } from 'react';
 import FileUpload from './FileUpload';
-export class Counter extends Component {
-  static displayName = Counter.name;
+import {Layout} from "./Layout";
+export class App extends Component {
+  static displayName = App.name;
 
   constructor(props) {
     super(props);
@@ -17,16 +18,16 @@ export class Counter extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Counter</h1>
+        <Layout>    
+        <h1>Word Counter</h1>
 
-        <p>This is a simple example of a React component.</p>
+        <p>Push the "Increment" button once you have started the uploading of the file to verify that UI is not blocked</p>
 
         <p aria-live="polite">Current count: <strong>{this.state.currentCount}</strong></p>
 
         <button className="btn btn-primary" onClick={this.incrementCounter}>Increment</button>
-          <FileUpload></FileUpload>
-      </div>
+          <FileUpload/>    
+        </Layout>
     );
   }
 }
