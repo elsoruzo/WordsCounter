@@ -8,6 +8,7 @@ namespace WordCounter.Models
         public const string Result = "Result: ";
         public const string FileExtTxt = ".txt";
         public const string FileExtCsv = ".csv";
-        public const string ZeroWordsCount = "0";
+        public const int LinesBufferSize = 100;
+        public const int WordsCountStartingPoint = 0;
     }
 }

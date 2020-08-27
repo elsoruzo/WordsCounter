@@ -17,41 +17,49 @@ namespace WordCounter.Services
     public class TxtCsvCsvService : ITxtCsvService
     {
         private static readonly char[] Separators = {' ', '.', ',','?','!'};
-        private static List<string> _lines;
-        private static ConcurrentDictionary<string, int> _countDictionary;
+        private static List<string> _bufferLines;
+        private static  ConcurrentQueue<string> _accumBufferQueue;
+
         public async Task<string> GetWordsCount(IFormFile body)
         {
-            _lines = new List<string>();
-
+            var result = Constants.WordsCountStartingPoint;
 
             using (var streamReader = new StreamReader(body.OpenReadStream()))
             {
+                _bufferLines = new List<string>(Constants.LinesBufferSize);
+                var counter = 0;
                 string line;
                 while ((line = await streamReader.ReadLineAsync()) != null)
                 {
-                    _lines.Add(line);
+                    counter += 1;  
+                    _bufferLines.Add(line);
+                    if (counter == Constants.LinesBufferSize)
+                    {
+                        result += GetWordsCountFromLines(_bufferLines);
+                        counter = 0;
+                        _bufferLines = new List<string>(Constants.LinesBufferSize);
+                    }
                 }
             }
-
-            ConcurrentDictionary<string, int> result = GetWordsCountFromLines(_lines);
-            
-            return result.Count == 0 ? Constants.ZeroWordsCount : result.First().Value.ToString();
+            return result.ToString();
         }
         
-        private static ConcurrentDictionary<string, int> GetWordsCountFromLines(IEnumerable<string> lines)
+        private static int GetWordsCountFromLines(IEnumerable<string> lines)
         {
-            _countDictionary = new ConcurrentDictionary<string, int>();
-            Parallel.ForEach(lines, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },line =>
-            {
-                var words = line.Split(Separators, StringSplitOptions.RemoveEmptyEntries);
+            _accumBufferQueue = new ConcurrentQueue<string>();
+            
+             return lines.AsParallel().WithDegreeOfParallelism( Environment.ProcessorCount )
+                 .Aggregate(_accumBufferQueue,
+             (accum, line) =>
+             {
+                 foreach (var word in line.Split(Separators, StringSplitOptions.RemoveEmptyEntries))
+                 {
+                     accum.Enqueue(word);
+                 }
 
-                foreach (var word in words)
-                {
-                    _countDictionary.AddOrUpdate("amount", 1, (key, oldValue) => oldValue + 1);
-                }
-            });
-
-            return _countDictionary;
+                 return accum;
+             },finalResult => finalResult.Count);
+             
         }
     }
 }
