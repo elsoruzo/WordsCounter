@@ -7,7 +7,7 @@ namespace WordCounter.Services
 {
     public interface IFileSelectorService
     {
-        public Task<string> GetResult(IFormFile body);
+        public Task<int> GetResult(IFormFile body);
     }
 
     public class FileSelectorService : IFileSelectorService
@@ -21,13 +21,13 @@ namespace WordCounter.Services
             _txtCsvService = txtCsvService;
             _fileValidationService = fileValidationService;
         }
-        public async Task<string> GetResult(IFormFile body)
+        public async Task<int> GetResult(IFormFile body)
         {
             return await SelectService(body);
 
         }
         
-        private async Task<string> SelectService(IFormFile body)
+        private async Task<int> SelectService(IFormFile body)
         {
             var ext = _fileValidationService.GetFileExtType(body);
             if (ext == Constants.FileExtTxt||ext == Constants.FileExtCsv)

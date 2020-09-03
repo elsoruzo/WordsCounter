@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,55 +10,51 @@ namespace WordCounter.Services
 {
     public interface ITxtCsvService
     {
-        public Task<string> GetWordsCount(IFormFile body);
+        public Task<int> GetWordsCount(IFormFile body);
     }
 
     public class TxtCsvCsvService : ITxtCsvService
     {
-        private static readonly char[] Separators = {' ', '.', ',','?','!'};
-        private static List<string> _bufferLines;
-        private static  ConcurrentQueue<string> _accumBufferQueue;
 
-        public async Task<string> GetWordsCount(IFormFile body)
+        public async Task<int> GetWordsCount(IFormFile body)
         {
             var result = Constants.WordsCountStartingPoint;
 
             using (var streamReader = new StreamReader(body.OpenReadStream()))
             {
-                _bufferLines = new List<string>(Constants.LinesBufferSize);
+                var bufferLines = new List<string>(Constants.LinesBufferSize);
                 var counter = 0;
                 string line;
                 while ((line = await streamReader.ReadLineAsync()) != null)
                 {
                     counter += 1;  
-                    _bufferLines.Add(line);
+                    bufferLines.Add(line);
                     if (counter == Constants.LinesBufferSize)
                     {
-                        result += GetWordsCountFromLines(_bufferLines);
+                        result += GetWordsCountFromLines(bufferLines);
                         counter = 0;
-                        _bufferLines = new List<string>(Constants.LinesBufferSize);
+                        bufferLines.Clear();
                     }
                 }
+
+                if (bufferLines.Count > 0)
+                {
+                    result += GetWordsCountFromLines(bufferLines);
+                }
+               
             }
-            return result.ToString();
+
+            return result;
         }
         
         private static int GetWordsCountFromLines(IEnumerable<string> lines)
         {
-            _accumBufferQueue = new ConcurrentQueue<string>();
-            
-             return lines.AsParallel().WithDegreeOfParallelism( Environment.ProcessorCount )
-                 .Aggregate(_accumBufferQueue,
-             (accum, line) =>
-             {
-                 foreach (var word in line.Split(Separators, StringSplitOptions.RemoveEmptyEntries))
-                 {
-                     accum.Enqueue(word);
-                 }
-
-                 return accum;
-             },finalResult => finalResult.Count);
-             
+            var separators = new [] {' ', '.', ',','?','!'};
+            return lines. 
+                AsParallel() 
+                .WithDegreeOfParallelism(Environment.ProcessorCount)
+                .Select(line => line.Split(separators, StringSplitOptions.RemoveEmptyEntries).Length).Sum();
+ 
         }
     }
 }

@@ -42,7 +42,7 @@ namespace WordCounter.Services
             }
 
             var wordCount = await _fileSelectorService.GetResult(body);
-            return await _messageService.GetMessage(FileState.Supported, wordCount);
+            return await _messageService.GetMessage(FileState.Supported, wordCount.ToString());
         }
     }
 }
